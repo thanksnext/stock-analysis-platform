@@ -1,0 +1,340 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Sample API
+  description: A sample API to illustrate OpenAPI concepts
+servers:
+  - url: https://localhost:8000/api/v1
+paths:
+  /company_type/:
+    get:
+      summary: company type
+      description: Returns a list of company type
+      parameters:
+        - in: query
+          name: fields
+          description: The specific fields you want to show. ex. id,company_type
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/company_type'
+      tags:
+        - company
+
+  /company_type/{id}/:
+    get:
+      summary: a specific company type
+      description: Returns a specific company type
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Fill in a company type id
+          schema:
+            type: integer
+        - in: query
+          name: fields
+          description: The specific fields you want to show. ex. id,company_type
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/company_type'
+      tags:
+        - company
+  /company/:
+    get:
+      summary: company
+      description: Returns a list of company
+      parameters:
+        - in: query
+          name: fields
+          description: The specific fields you want to show. ex. company_code,company_name
+          schema:
+            type: string
+        - in: query
+          name: company_type
+          description: The specific company type you want to filter. ex. 1 for 水泥工業
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/company'
+      tags:
+        - company
+
+  /company/{company_code}/:
+    get:
+      summary: a specific summary
+      description: Returns a specific company
+      parameters:
+        - in: path
+          name: company_code
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: fields
+          description: The specific fields you want to show. ex. company_code,company_name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/company'
+      tags:
+        - company
+
+  /stock/{company_code}/:
+    get:
+      summary: a specific stock info of company
+      description: Returns the stock info of a specific company
+      parameters:
+        - in: path
+          name: company_code
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: fields
+          description: The specific fields you want to show. ex. trade_date,opening_price
+          schema:
+            type: string
+        - in: query
+          name: start_date
+          description: Filtering the date greater than or equal to  start_date
+          schema:
+            type: string
+        - in: query
+          name: end_date
+          description: Filtering the date less than or equal to end_date
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/stock'
+      tags:
+        - stock
+  /income/{company_code}/:
+    get:
+      summary: a specific income info of company
+      description: Returns the income info of a specific company
+      parameters:
+        - in: path
+          name: company_code
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: fields
+          description: The specific fields you want to show. ex. total_operating_expense, profit_loss
+          schema:
+            type: string
+        - in: query
+          name: start_date_year_season
+          description: Filtering the year-season greater than or equal to  start_date_year_season(ex:102-1)
+          schema:
+            type: string
+        - in: query
+          name: end_date_year_season
+          description: Filtering the year-season less than or equal to end_date_year_season(ex:102-2)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/income'
+      tags:
+        - income
+
+  /balance/{company_code}/:
+    get:
+      summary: a specific balance info of company
+      description: Returns the balance info of a specific company
+      parameters:
+        - in: path
+          name: company_code
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: fields
+          description: The specific fields you want to show. ex. total_assets, total_liabilities
+          schema:
+            type: string
+        - in: query
+          name: start_date_year_season
+          description: Filtering the year-season greater than or equal to  start_date_year_season(ex:102-1)
+          schema:
+            type: string
+        - in: query
+          name: end_date_year_season
+          description: Filtering the year-season less than or equal to end_date_year_season(ex:102-2)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/balance'
+      tags:
+        - balance
+
+components:
+  schemas:
+    company:
+      type: object
+      properties:
+        company_code:
+          type: number
+        company_name:
+          type: string
+        company_abbreviation:
+          type: string
+        company_type:
+          $ref: '#/components/schemas/company_type'
+    company_type:
+      properties:
+        id:
+          type: integer
+        company_type:
+          type: integer
+    stock:
+      type: object
+      properties:
+        trade_date:
+          type: string
+        opening_price:
+          type: number
+        highest_price:
+          type: number
+        lowest_price:
+          type: number
+        closing_price:
+          type: number
+        trade_volume:
+          type: number
+        trade_value:
+          type: number
+        transaction:
+          type: number
+    income:
+      type: object
+      properties:
+        year_season:
+          $ref: '#/components/schemas/year_season'
+        company:
+          $ref: '#/components/schemas/company'
+        total_operating_expense:
+          type: number
+        profit_loss_from_continuing_operations_before_tax:
+          type: number
+        profit_loss:
+          type: number
+        profit_loss_attributable_to_owners_of_parent:
+          type: number
+        profit_loss_attributable_to_non_controlling_interests:
+          type: number
+        comprehensive_income_attributable_to_owners_of_parent:
+          type: number
+        comprehensive_income_attributable_to_non_control_interests:
+          type: number
+        total_primary_earnings_per_share:
+          type: number
+        net_operating_income_loss:
+          type: number
+        total_non_operating_income_and_expenses:
+          type: number
+        profit_loss_from_continuing_operations:
+          type: number
+        total_comprehensive_income:
+          type: number
+        total_operating_revenue:
+          type: number
+        total_operating_costs:
+          type: number
+        gross_profit_loss_from_operations:
+          type: number
+        gross_profit_loss_from_operations_net:
+          type: number
+        total_tax_expense_income:
+          type: number
+        other_comprehensive_income_net:
+          type: number
+    balance:
+      type: object
+      properties:
+        year_season:
+          $ref: '#/components/schemas/year_season'
+        company:
+          $ref: '#/components/schemas/company'
+        total_assets:
+          type: number
+        total_liabilities:
+          type: number
+        total_capital:
+          type: number
+        total_capital_surplus:
+          type: number
+        total_retained_earnings:
+          type: number
+        total_other_equity_interest:
+          type: number
+        total_equity_attributable_to_owners_of_parent:
+          type: number
+        total_non_controlling_interests:
+          type: number
+        total_equity:
+          type: number
+        number_treasury_share_acquired_by_company_and_subsidiaries:
+          type: number
+        equivalent_issued_shares_of_advance_receipts_for_common_stock:
+          type: number
+        book_value_per_share:
+          type: number
+        total_current_assets:
+          type: number
+        non_current_assets_net:
+          type: number
+        total_current_liabilities:
+          type: number
+        total_non_current_liabilities:
+          type: number
+    year_season:
+      type: object
+      properties:
+        year:
+          type: number
+        season:
+          type: number

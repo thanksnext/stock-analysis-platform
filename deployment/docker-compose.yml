@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+
+  backend:
+    build:
+      context: ../finance
+      dockerfile: Dockerfile
+    image: stock-backend:latest
+    container_name: stock-backend
+    environment:
+      DATABASE_URL: 
+      POSTGRESQL_HOST: 
+      POSTGRESQL_PORT: 
+      SECRET_KEY: 
+      ADMIN_USERNAME: 
+      ADMIN_PASSWORD: 
+      REDIS_URL: 
+    volumes:
+      - ../data/raw_data:/app/data/raw_data
+    #   - static_data:/data/static
+    #   - media_data:/data/media
+      - ../data/logs:/app/data/logs
+    depends_on:
+      - database
+      - cache
+  
+    ports:
+      - 80:8000
+
+  #rabbitmq container
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: 
+      RABBITMQ_DEFAULT_PASS: 
+      RABBITMQ_DEFAULT_VHOST: 
+    ports:
+       - "5672:5672"
+       - "15672:15672"
+
+
+  database:
+    build: .
+    container_name: database
+    image: stock-db:latest
+    restart: always
+    environment:
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
+      POSTGRES_DB: 
+    ports:
+      - 5432:5432
+
+  cache:
+    image: redis:6.2.1-alpine
+    container_name: cache
+    restart: always
+    ports:
+      - 6379:6379
+
+volumes:
+  db_data:
+  static_data:
+  media_data:
+  log_data:
+

@@ -1,0 +1,2 @@
+# Docker will ignore these files when building.
+envfile

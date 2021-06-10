@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.application.database.name }}
+  labels:
+    {{- include "finance.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.database.type }}
+  ports:
+    - port: {{ .Values.service.database.port }}
+      targetPort: {{ .Values.service.database.targetPort }}
+      nodePort: {{ .Values.service.database.nodePort }}
+      protocol: TCP
+#      name: http
+  selector:
+    app: {{ .Values.application.database.name }}
