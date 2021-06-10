@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.application.cache.name }}
+  labels:
+    {{- include "finance.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.cache.type }}
+  ports:
+    - port: {{ .Values.service.cache.port }}
+      targetPort: {{ .Values.service.cache.targetPort }}
+      nodePort: {{ .Values.service.cache.nodePort }}
+      protocol: TCP
+#      name: http
+  selector:
+    app: {{ .Values.application.cache.name }}

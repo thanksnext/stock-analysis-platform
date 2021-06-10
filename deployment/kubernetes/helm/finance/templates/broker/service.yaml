@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.application.broker.name }}
+  labels:
+    {{- include "finance.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.broker.queue.type }}
+  ports:
+    - name: {{ .Values.service.broker.queue.name }}
+      port: {{ .Values.service.broker.queue.port }}
+      targetPort: {{ .Values.service.broker.queue.targetPort }}
+      protocol: TCP
+    - name: {{ .Values.service.broker.interface.name }}
+      port: {{ .Values.service.broker.interface.port }}
+      targetPort: {{ .Values.service.broker.interface.targetPort }}
+      protocol: TCP
+  selector:
+    app: {{ .Values.application.broker.name }}

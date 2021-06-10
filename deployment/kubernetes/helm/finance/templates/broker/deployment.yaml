@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.application.broker.name }}
+  labels:
+    app: {{ .Values.application.broker.name }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.application.broker.name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Values.application.broker.name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "finance.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.broker.repository }}:{{ .Values.image.broker.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.broker.pullPolicy }}
+          ports:
+            - name: {{ .Values.service.broker.queue.targetPort }}
+              containerPort: {{ .Values.service.broker.queue.port }}
+              protocol: TCP
+            - name: {{ .Values.service.broker.interface.targetPort }}
+              containerPort: {{ .Values.service.broker.interface.port }}
+              protocol: TCP
+#          livenessProbe:
+#            tcpSocket:
+#              port: {{ .Values.service.broker.queue.targetPort }}
+#            initialDelaySeconds: 30
+#            periodSeconds: 20
+#          readinessProbe:
+#            tcpSocket:
+#              port: {{ .Values.service.broker.queue.targetPort }}
+#            initialDelaySeconds: 20
+#            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.application.broker.name }}
+            - configMapRef:
+                name: {{ .Values.application.broker.name }}
+#          volumeMounts:
+#            - name: broker
+#              mountPath: /var/lib/postgresql/data
+#              subPath: postgres
+#      volumes:
+#        - name: broker
+#          persistentVolumeClaim:
+#            claimName: local-claim
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,42 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flake8 = "*"
+black = "*"
+pre-commit = "*"
+flake8-isort = "*"
+pytest = "*"
+
+[packages]
+django-environ = "*"
+psycopg2-binary = "*"
+uwsgi = "*"
+django-picklefield = "*"
+django = "*"
+django-constance = "*"
+requests = "*"
+django-extensions = "*"
+djangorestframework = "*"
+djangorestframework-queryfields = "*"
+django-filter = "*"
+pandas = "*"
+numpy = "*"
+lxml = "*"
+drf-yasg = "*"
+djangorestframework-simplejwt = "*"
+djoser = "*"
+django-redis = "*"
+redis = "*"
+sqlalchemy = "*"
+celery = "*"
+django-celery-beat = "*"
+django-celery-results = "*"
+
+[requires]
+python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

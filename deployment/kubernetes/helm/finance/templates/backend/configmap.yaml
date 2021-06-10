@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.application.backend.name }}
+data:
+  DEBUG: "True"
+  DEBUG_TRACE: "True"
